@@ -1612,6 +1612,15 @@ var AUD_SIGNATURES=[
 var AUD_RATES=[1, 1.25, 1.5, 2], curRateIndex=0;
 var activeScriptAud=null;
 
+function getFemaleVoice(){
+  if(!window.speechSynthesis) return null;
+  var vs = window.speechSynthesis.getVoices() || [];
+  return vs.find(function(v){ return /female|neerja|samantha|zira|swara|kavya|victoria/i.test(v.name) && (/en-in/i.test(v.lang) || /en/i.test(v.lang)); })
+      || vs.find(function(v){ return /female|samantha|zira|victoria/i.test(v.name); })
+      || vs.find(function(v){ return /en-in/i.test(v.lang); })
+      || vs[0] || null;
+}
+
 function findAud(text){
   for(var i=0;i<AUD_SIGNATURES.length;i++){
     if(text.indexOf(AUD_SIGNATURES[i][0])!==-1) return AUD_SIGNATURES[i][1];
@@ -1721,6 +1730,7 @@ function createAudioBar(file, quoteText, isPop){
       if('speechSynthesis' in window){
         var clean=quoteText.replace(/[\[\]"”]/g,'').replace(/₹/g,'rupees ');
         var utter=new SpeechSynthesisUtterance(clean);
+        var fv=getFemaleVoice(); if(fv) utter.voice=fv;
         utter.rate=AUD_RATES[curRateIndex];
         utter.onend=function(){setPlaying(false);activeScriptAud=null};
         utter.onerror=function(){setPlaying(false);activeScriptAud=null};
@@ -2015,6 +2025,7 @@ function goWalk(i){
       if('speechSynthesis' in window && curWalk){
         var text = it.label + '. ' + (it.sub || '');
         var utter = new SpeechSynthesisUtterance(text);
+        var fv = getFemaleVoice(); if(fv) utter.voice = fv;
         utter.rate = RATES[ri];
         utter.onend = function(){
           if(curWalk && walkIdx < curWalk.items.length - 1) goWalk(walkIdx + 1);
@@ -2029,7 +2040,7 @@ function goWalk(i){
   }
 
   if(window.speechSynthesis) window.speechSynthesis.cancel();
-  A.src = 'assets/audio/walkthrough/' + it.file + '.mp3';
+  A.src = 'assets/audio/walkthrough/' + it.file + '.mp3?v=female';
   A.playbackRate = RATES[ri];
   if(player) $('#vwP', player).style.width = '0';
   A.play().catch(function(){ setWalkPP(false); });
