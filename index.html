@@ -829,8 +829,8 @@ kbd{
 @media (max-width:1100px){.ov{grid-template-columns:1fr}}
 
 /* ---------- split: flowchart left, standards right ---------- */
-.split{display:grid;grid-template-columns:minmax(0,auto) minmax(380px,1fr);gap:20px;align-items:start;margin-top:14px}
-.split-flow{background:#fff;border-radius:var(--jx-r-xl);box-shadow:var(--jx-shadow);padding:12px;width:fit-content;max-width:100%;box-sizing:border-box}
+.split{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px;align-items:start;margin-top:14px}
+.split-flow{background:#fff;border-radius:var(--jx-r-xl);box-shadow:var(--jx-shadow);padding:14px;width:100%;max-width:100%;box-sizing:border-box}
 .fc-scroll{overflow-x:auto;overscroll-behavior-x:contain;max-width:100%}
 .fc{position:relative;display:grid;column-gap:0;row-gap:34px;min-width:520px;padding-bottom:6px}
 .fc-lane{grid-row:1/-1;background:#F1F1EF;border-radius:0}
@@ -886,7 +886,7 @@ kbd{
 @media (max-width:899px){
   .split{grid-template-columns:minmax(0,1fr)}
   .split-flow{width:100%;max-width:100%}
-  .split-std{position:static;max-height:none}
+  .split-std{position:static;max-height:none;width:100%}
   .std-list{overflow:visible}
 }
 
@@ -1007,7 +1007,7 @@ kbd{
 <style>
 /* ---------- v3 flowcharts: pptx geometry, portal styling ---------- */
 .fc-scroll{overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
-.fx{position:relative;margin:0;flex:0 0 auto}
+.fx{position:relative;margin:0 auto;flex:0 0 auto}
 .fx-lane{position:absolute;background:#ECEAE4}
 .fx-lane.l1{background:#E4EAF0}
 .fx-lane.l2{background:#E9EFE6}
@@ -1225,13 +1225,13 @@ kbd{
 @media (min-width:900px){
   .split{
     display:grid;
-    grid-template-columns:minmax(0,auto) minmax(380px,1fr);
+    grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);
     gap:20px;
     align-items:start;
   }
   .split .split-flow{
-    padding:12px;
-    width:fit-content;
+    padding:14px;
+    width:100%;
     max-width:100%;
     box-sizing:border-box;
   }
@@ -1240,7 +1240,7 @@ kbd{
     max-width:100%;
   }
   .split .fx{
-    margin:0;
+    margin:0 auto;
   }
   .split .split-std{
     position:sticky;
@@ -1255,6 +1255,7 @@ kbd{
     box-shadow:0 1px 2px rgba(17,17,19,.05),0 18px 40px -28px rgba(17,17,19,.35);
     overflow:hidden;
     min-width:0;
+    width:100%;
   }
   .split .std-h{padding:16px 20px 12px;border-bottom:1px solid var(--jx-line)}
   .split .std-list{position:relative;display:block;overflow-y:auto;overscroll-behavior:contain;padding:0 20px 8px;scrollbar-width:thin;scrollbar-color:#bbb transparent}
@@ -1328,7 +1329,8 @@ kbd{
 }
 @media (prefers-reduced-motion:reduce){.vw-player,.vw-player.is-on{transition:none}}
 /* QA: flowchart polish */
-.fx .fx-head{box-sizing:border-box}
+.fx .fx-head{box-sizing:border-box;box-shadow:inset -1px 0 0 rgba(255,255,255,.25)}
+.fx .fx-lane{box-sizing:border-box}
 .fx .nd.term,.fx .nd.end{padding:4px 18px}
 .fx .nd.fxn{padding:4px 9px}
 /* QA: identical chapter header for every chapter (grid, not wrap-dependent) */
@@ -1589,7 +1591,7 @@ function fitOne(fx){
   var sc=fx.parentNode; if(!sc||!sc.offsetParent) return;
   var w=parseFloat(fx.dataset.w), avail=sc.clientWidth;
   var sp=fx.closest('.split'), side=sp&&innerWidth>=900;
-  var z=Math.max(side?0.7:ZMIN,Math.min(ZMAX,(avail+4)/w));
+  var z=Math.max(side?0.7:ZMIN,Math.min(side?1.1:ZMAX,(avail+4)/w));
   if(Math.abs(z-1.0)<0.025) z=1.0;
   fx.style.zoom=z;
   fitText(fx);
