@@ -830,8 +830,8 @@ kbd{
 
 /* ---------- split: flowchart left, standards right ---------- */
 .split{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px;align-items:start;margin-top:14px}
-.split-flow{background:#fff;border-radius:var(--jx-r-xl);box-shadow:var(--jx-shadow);padding:14px;width:100%;max-width:100%;box-sizing:border-box}
-.fc-scroll{overflow-x:auto;overscroll-behavior-x:contain;max-width:100%}
+.split-flow{background:#fff;border-radius:var(--jx-r-lg,20px);box-shadow:var(--jx-shadow);padding:12px;width:100%;max-width:100%;box-sizing:border-box}
+.fc-scroll{overflow-x:auto;overscroll-behavior-x:contain;max-width:100%;border-radius:10px}
 .fc{position:relative;display:grid;column-gap:0;row-gap:34px;min-width:520px;padding-bottom:6px}
 .fc-lane{grid-row:1/-1;background:#F1F1EF;border-radius:0}
 .fc-lane:nth-child(odd){background:#F6F6F4}
@@ -1007,7 +1007,11 @@ kbd{
 <style>
 /* ---------- v3 flowcharts: pptx geometry, portal styling ---------- */
 .fc-scroll{overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
-.fx{position:relative;margin:0 auto;flex:0 0 auto}
+.fx{position:relative;margin:0 auto;flex:0 0 auto;border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px rgba(17,17,19,.10)}
+.fx .fx-head:first-of-type{border-top-left-radius:10px}
+.fx .fx-head:last-of-type{border-top-right-radius:10px}
+.fx .fx-lane:first-of-type{border-bottom-left-radius:10px}
+.fx .fx-lane:last-of-type{border-bottom-right-radius:10px}
 .fx-lane{position:absolute;background:#ECEAE4}
 .fx-lane.l1{background:#E4EAF0}
 .fx-lane.l2{background:#E9EFE6}
@@ -1230,7 +1234,8 @@ kbd{
     align-items:start;
   }
   .split .split-flow{
-    padding:14px;
+    padding:12px;
+    border-radius:var(--jx-r-lg,20px);
     width:100%;
     max-width:100%;
     box-sizing:border-box;
@@ -1238,9 +1243,12 @@ kbd{
   .split .fc-scroll{
     overflow-x:auto;
     max-width:100%;
+    border-radius:10px;
   }
   .split .fx{
     margin:0 auto;
+    border-radius:10px;
+    overflow:hidden;
   }
   .split .split-std{
     position:sticky;
@@ -1591,7 +1599,7 @@ function fitOne(fx){
   var sc=fx.parentNode; if(!sc||!sc.offsetParent) return;
   var w=parseFloat(fx.dataset.w), avail=sc.clientWidth;
   var sp=fx.closest('.split'), side=sp&&innerWidth>=900;
-  var z=Math.max(side?0.7:ZMIN,Math.min(side?1.1:ZMAX,(avail+4)/w));
+  var z=Math.max(side?0.7:ZMIN,Math.min(side?1.1:ZMAX,(avail)/w));
   if(Math.abs(z-1.0)<0.025) z=1.0;
   fx.style.zoom=z;
   fitText(fx);
