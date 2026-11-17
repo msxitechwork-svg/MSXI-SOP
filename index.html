@@ -1478,7 +1478,7 @@ kbd{
  .vii-wd>div{border-left:0;border-top:1px solid var(--jx-line-2);padding:10px 12px}
  .vii-wd>div:first-child{border-top:0}
  .vii-wd>div::before{content:attr(data-d);font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--jx-muted)}
- .vii-wd>div.empty{display:none}
+ 
  .vii-day{min-height:62px;padding:5px}
  .vii-b{min-width:22px;height:20px;font-size:10.5px;padding:0 4px}
  .vii-ch div{padding:8px 4px;font-size:9.5px;letter-spacing:.06em;text-align:center}
@@ -2656,8 +2656,7 @@ function key(){return '<div class="vii-key"><span class="k-daily"><i></i>Daily</
 function visitBand(){return '<div class="vii-band"><h4>During JSW official visit</h4><div class="row">'+S.visit.map(card).join('')+'</div></div>'}
 function weekView(){
   var h='<div class="vii-week"><div class="vii-wh">'+DAYS.map(function(d){return '<div>'+d.slice(0,3)+'</div>'}).join('')+'</div>';
-  h+='<div class="vii-band"><h4>Every day · at the start of the day</h4><div class="row">'+S.daily.map(card).join('')+'</div></div>';
-  var cols=[[S.monAlt],[S.tueWeekly,S.tueAlt],[S.wedWeekly],[],[],[],[]];
+  var cols=[[S.daily,S.monAlt],[S.daily,S.tueWeekly,S.tueAlt],[S.daily,S.wedWeekly],[S.daily],[S.daily],[S.daily],[S.daily]];
   h+='<div class="vii-wd">'+cols.map(function(c,i){
     var inner=c.map(function(g){return g.map(card).join('')}).join('');
     return '<div data-d="'+DAYS[i]+'" class="'+(i===6?'sun ':'')+(inner?'':'empty')+'">'+inner+'</div>'}).join('')+'</div>';
@@ -2676,7 +2675,7 @@ function monthOf(y,m){
   return cells;
 }
 function itemsFor(c){
-  var dow=(c.date.getDay()+6)%7, o=[];
+  var dow=(c.date.getDay()+6)%7, o=S.daily.map(function(n){return [n,'Every day']});
   if(c.w3) o=o.concat(S.first3.map(function(n){return [n,'First 3 working days']}));
   if(c.d<=5) o=o.concat(S.d1to5.map(function(n){return [n,'Between the 1st and 5th']}));
   if(c.d===10) o=o.concat(S.d10.map(function(n){return [n,'10th of the month']}));
@@ -2689,7 +2688,6 @@ function sameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b
 function monthView(){
   var y=cur.getFullYear(), m=cur.getMonth(), cells=monthOf(y,m), td=new Date();
   var h='<div class="vii-mbar"><h3>'+cur.toLocaleString('en-GB',{month:'long',year:'numeric'})+'</h3><button type="button" class="vii-today" data-m="today">Today</button><button type="button" class="vii-nav" data-m="-1" aria-label="Previous month"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button><button type="button" class="vii-nav" data-m="1" aria-label="Next month"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button></div>';
-  h+='<div class="vii-daily"><span class="vii-bandh">Every day</span>'+S.daily.map(card).join('')+'</div>';
   h+='<div class="vii-cal"><div class="vii-ch">'+DAYS.map(function(d){return '<div>'+d.slice(0,3)+'</div>'}).join('')+'</div><div class="vii-grid">';
   cells.forEach(function(c){
     if(!c){h+='<div class="vii-day out" aria-hidden="true"></div>';return}
@@ -2698,14 +2696,14 @@ function monthView(){
   });
   h+='</div></div><div class="vii-panel" id="viiPanel"></div>';
   h+='<div class="vii-band" style="margin-top:16px;border:1px solid var(--jx-line-2);border-radius:var(--jx-r-lg)"><h4>During JSW official visit · not tied to a date</h4><div class="row">'+S.visit.map(card).join('')+'</div></div>';
-  h+='<p class="vii-note">Numbers are the activity Sr. numbers; click a number or a day for details. “First 3 working days” counts Sundays as non-working and does not account for public holidays; “1-5” and “10th” are calendar dates. Alternate-week activities (Monday and Tuesday) and the weekly Accessory Business Review (no day stated in the Excel) are not pinned to specific weeks.</p>';
+  h+='<p class="vii-note">Numbers are the activity Sr. numbers (4 and 5 repeat every day); click a number or a day for details. “First 3 working days” counts Sundays as non-working and does not account for public holidays; “1-5” and “10th” are calendar dates. Alternate-week activities (Monday and Tuesday) and the weekly Accessory Business Review (no day stated in the Excel) are not pinned to specific weeks.</p>';
   return h;
 }
 function panel(){
   var p=$('#viiPanel'); if(!p) return;
   var c=monthOf(sel.getFullYear(),sel.getMonth()).filter(Boolean).filter(function(c){return c.d===sel.getDate()})[0];
   var its=c?itemsFor(c):[];
-  p.innerHTML='<h4>'+sel.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</h4><p class="s">'+(its.length?its.length+' scheduled here, plus the two daily meetings.':'Only the two daily meetings fall on this day.')+'</p><div class="row">'+S.daily.map(card).join('')+its.map(function(i){return card(i[0]).replace('<span class="m">','<span class="m">'+esc(i[1])+' · ')}).join('')+'</div>';
+  p.innerHTML='<h4>'+sel.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</h4><p class="s">'+(its.length+' scheduled on this day.')+'</p><div class="row">'+its.map(function(i){return card(i[0]).replace('<span class="m">','<span class="m">'+esc(i[1])+' · ')}).join('')+'</div>';
 }
 function listView(){
   var set=CAD.filter(function(c){return c[0]===listF})[0][1];
