@@ -2555,6 +2555,72 @@ mountWalkthroughButtons();
 
 </script>
 <script>(function(){document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[data-preview]');if(!a)return;ev.preventDefault();ev.stopPropagation();var u=a.getAttribute('data-preview'),t=a.getAttribute('data-title')||'Preview';var ov=document.createElement('div');ov.className='pv-ov';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label',t+' preview');ov.innerHTML='<div class="pv-box"><div class="pv-bar"><b></b><a class="pv-dl" download>Download PDF</a><button type="button">Close</button></div><iframe class="pv-frame" title="Preview"></iframe></div>';ov.querySelector('b').textContent=t;var d=ov.querySelector('a');d.href=u;d.setAttribute('download',t+'.pdf');ov.querySelector('iframe').src=u+'#toolbar=0&navpanes=0&view=Fit';var prev=document.activeElement;function close(){ov.remove();document.removeEventListener('keydown',k);if(prev&&prev.focus)prev.focus()}function k(e){if(e.key==='Escape')close()}ov.addEventListener('click',function(e){if(e.target===ov)close()});ov.querySelector('button').addEventListener('click',close);document.addEventListener('keydown',k);document.body.appendChild(ov);ov.querySelector('button').focus()},true)})();</script>
+<script id="zone-js">/* Hover (or focus / tap) a zone name to see its image. Chapter-specific, text only. */
+(function(){
+'use strict';
+var Z=[
+ {re:/\bexpression studios?\b/i,img:'assets/zones/expression-studio.jpg',alt:'Expression Studio',ch:['ch5']},
+ {re:/\bimmersive mobility displays?\b/i,img:'assets/zones/immersive-mobility-display.jpg',alt:'Immersive Mobility Display',ch:['ch3']},
+ {re:/\bpower source displays?\b/i,img:'assets/zones/power-source-display.jpg',alt:'Power Source Display',ch:['ch3']},
+ {re:/\blounges?\b/i,img:'assets/zones/lounge.jpg',alt:'Lounge',ch:['ch2','ch4']}
+];
+function curCh(){var m=(location.hash||'').match(/^#\/?(ch\d+)/);return m?m[1]:''}
+function wrap(root,ch){
+  var terms=Z.filter(function(z){return z.ch.indexOf(ch)>-1}); if(!terms.length||!root) return;
+  var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
+    var p=n.parentNode; if(!p||p.closest('script,style,svg,title,textarea,input,a,button,.zh,.zh-card')) return NodeFilter.FILTER_REJECT;
+    return terms.some(function(z){return z.re.test(n.nodeValue)})?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT}});
+  var nodes=[],n; while((n=w.nextNode())) nodes.push(n);
+  nodes.forEach(function(t){
+    var s=t.nodeValue, frag=document.createDocumentFragment();
+    while(s){
+      var best=null; terms.forEach(function(z){var m=z.re.exec(s); if(m&&(!best||m.index<best.m.index)) best={z:z,m:m}});
+      if(!best){frag.appendChild(document.createTextNode(s));break}
+      if(best.m.index) frag.appendChild(document.createTextNode(s.slice(0,best.m.index)));
+      var sp=document.createElement('span'); sp.className='zh'; sp.tabIndex=0; sp.dataset.zimg=best.z.img; sp.dataset.zalt=best.z.alt; sp.textContent=best.m[0];
+      frag.appendChild(sp); s=s.slice(best.m.index+best.m[0].length);
+    }
+    t.parentNode.replaceChild(frag,t);
+  });
+}
+var card=document.createElement('div'); card.className='zh-card'; card.setAttribute('role','tooltip'); card.innerHTML='<img alt="" decoding="async">';
+document.body.appendChild(card); var img=card.firstChild, cur=null;
+function place(el){
+  var r=el.getBoundingClientRect(), W=window.innerWidth, H=window.innerHeight, cw=Math.min(360,W-24)+2, ch=card.offsetHeight||cw*.65;
+  var x=Math.max(12,Math.min(W-cw-12,r.left+r.width/2-cw/2)), y=r.bottom+10;
+  if(y+ch>H-12) y=Math.max(12,r.top-ch-10);
+  card.style.left=x+'px'; card.style.top=y+'px';
+}
+function show(el){
+  if(cur===el) return; cur=el;
+  img.alt=el.dataset.zalt; card.setAttribute('aria-label',el.dataset.zalt);
+  var go=function(){if(cur===el){place(el);card.classList.add('on')}};
+  if(img.getAttribute('src')!==el.dataset.zimg){card.classList.remove('on');img.onload=go;img.src=el.dataset.zimg; if(img.complete) go()} else go();
+}
+function hide(){cur=null;card.classList.remove('on')}
+document.addEventListener('mouseover',function(e){var z=e.target.closest&&e.target.closest('.zh'); if(z) show(z)});
+document.addEventListener('mouseout',function(e){var z=e.target.closest&&e.target.closest('.zh'); if(z&&!(e.relatedTarget&&z.contains(e.relatedTarget))) hide()});
+document.addEventListener('focusin',function(e){var z=e.target.closest&&e.target.closest('.zh'); if(z) show(z)});
+document.addEventListener('focusout',function(e){if(e.target.closest&&e.target.closest('.zh')) hide()});
+document.addEventListener('click',function(e){var z=e.target.closest&&e.target.closest('.zh'); if(z){ if(cur===z&&card.classList.contains('on')&&e.pointerType==='touch') hide(); else show(z)} else if(cur) hide()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape') hide()});
+window.addEventListener('scroll',function(){if(cur) hide()},true);
+window.addEventListener('resize',hide);
+
+function run(){
+  var ch=curCh(); if(!ch) return;
+  var a=document.querySelector('article.jx-chapter[data-ch="'+ch+'"]'); wrap(a,ch);
+  Array.prototype.forEach.call(document.querySelectorAll('.pop'),function(p){wrap(p,ch)});
+}
+window.addEventListener('hashchange',function(){setTimeout(run,0)});
+new MutationObserver(function(ms){
+  var ch=curCh(); if(!ch) return;
+  ms.forEach(function(m){Array.prototype.forEach.call(m.addedNodes,function(n){
+    if(n.nodeType===1&&!n.classList.contains('zh-card')&&!n.classList.contains('zh')&&(n.matches('.pop')||n.closest('.pop'))) wrap(n,ch)})});
+}).observe(document.body,{childList:true,subtree:true});
+setTimeout(run,0);
+})();
+</script>
 <script id="vii-js">/* Chapter vii: DWM calendar + KPI explorer. Data: assets/vii-data.json (verbatim from the Excel). */
 (function(){
 'use strict';
@@ -2664,13 +2730,13 @@ function key(){return '<div class="vii-key"><span class="k-daily"><i></i>Daily</
 function visitBand(){return '<div class="vii-band"><h4>During JSW official visit</h4><div class="row">'+S.visit.map(card).join('')+'</div></div>'}
 function weekView(){
   var h='<div class="vii-week"><div class="vii-wh">'+DAYS.map(function(d){return '<div>'+d.slice(0,3)+'</div>'}).join('')+'</div>';
-  var cols=[[S.daily,S.monAlt],[S.daily,S.tueWeekly,S.tueAlt],[S.daily,S.wedWeekly],[S.daily],[S.daily],[S.daily],[S.daily]];
+  var cols=[[S.daily,S.monAlt],[S.daily,S.tueWeekly,S.tueAlt],[S.daily,S.wedWeekly],[S.daily],[S.daily],[S.daily],[]];
   h+='<div class="vii-wd">'+cols.map(function(c,i){
     var inner=c.map(function(g){return g.map(card).join('')}).join('');
     return '<div data-d="'+DAYS[i]+'" class="'+(i===6?'sun ':'')+(inner?'':'empty')+'">'+inner+'</div>'}).join('')+'</div>';
   h+='<div class="vii-band"><h4>Weekly · day not stated in the Excel</h4><div class="row">'+S.weeklyNoDay.map(card).join('')+'</div></div>';
   h+=visitBand()+'</div>';
-  h+='<p class="vii-note">Weekly activities repeat every week on the day shown. Dashed activities run on alternate weeks (Monday: Infrastructure Review; Tuesday: Recruitment, Retail Finance and Insurance reviews). The Excel does not say which weeks are the alternate ones.</p>';
+  h+='<p class="vii-note">Sunday is a holiday, so nothing is scheduled. Weekly activities repeat every week on the day shown. Dashed activities run on alternate weeks (Monday: Infrastructure Review; Tuesday: Recruitment, Retail Finance and Insurance reviews). The Excel does not say which weeks are the alternate ones.</p>';
   return h;
 }
 function monthOf(y,m){
@@ -2683,7 +2749,7 @@ function monthOf(y,m){
   return cells;
 }
 function itemsFor(c){
-  var dow=(c.date.getDay()+6)%7, o=S.daily.map(function(n){return [n,'Every day']});
+  var dow=(c.date.getDay()+6)%7; if(dow===6) return []; var o=S.daily.map(function(n){return [n,'Every day']});
   if(c.w3) o=o.concat(S.first3.map(function(n){return [n,'First 3 working days']}));
   if(c.d<=5) o=o.concat(S.d1to5.map(function(n){return [n,'Between the 1st and 5th']}));
   if(c.d===10) o=o.concat(S.d10.map(function(n){return [n,'10th of the month']}));
@@ -2704,14 +2770,14 @@ function monthView(){
   });
   h+='</div></div><div class="vii-panel" id="viiPanel"></div>';
   h+='<div class="vii-band" style="margin-top:16px;border:1px solid var(--jx-line-2);border-radius:var(--jx-r-lg)"><h4>During JSW official visit · not tied to a date</h4><div class="row">'+S.visit.map(card).join('')+'</div></div>';
-  h+='<p class="vii-note">Numbers are the activity Sr. numbers (4 and 5 repeat every day); click a number or a day for details. “First 3 working days” counts Sundays as non-working and does not account for public holidays; “1-5” and “10th” are calendar dates. Alternate-week activities (Monday and Tuesday) and the weekly Accessory Business Review (no day stated in the Excel) are not pinned to specific weeks.</p>';
+  h+='<p class="vii-note">Numbers are the activity Sr. numbers (4 and 5 repeat every day); click a number or a day for details. Sundays are holidays and are left empty. “First 3 working days” skips Sundays and does not account for other public holidays; “1-5” and “10th” are calendar dates. Alternate-week activities (Monday and Tuesday) and the weekly Accessory Business Review (no day stated in the Excel) are not pinned to specific weeks.</p>';
   return h;
 }
 function panel(){
   var p=$('#viiPanel'); if(!p) return;
   var c=monthOf(sel.getFullYear(),sel.getMonth()).filter(Boolean).filter(function(c){return c.d===sel.getDate()})[0];
   var its=c?itemsFor(c):[];
-  p.innerHTML='<h4>'+sel.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</h4><p class="s">'+(its.length+' scheduled on this day.')+'</p><div class="row">'+its.map(function(i){return card(i[0]).replace('<span class="m">','<span class="m">'+esc(i[1])+' · ')}).join('')+'</div>';
+  p.innerHTML='<h4>'+sel.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</h4><p class="s">'+(sel.getDay()===0?'Sunday is a holiday. No activities are scheduled.':its.length+' scheduled on this day.')+'</p><div class="row">'+its.map(function(i){return card(i[0]).replace('<span class="m">','<span class="m">'+esc(i[1])+' · ')}).join('')+'</div>';
 }
 function listView(){
   var set=CAD.filter(function(c){return c[0]===listF})[0][1];
@@ -2768,72 +2834,6 @@ function boot(){
     art.querySelectorAll('.vii-load').forEach(function(n){n.textContent='Could not load the data file. Please refresh.'})});
 }
 window.addEventListener('hashchange',boot); setTimeout(boot,0);
-})();
-</script>
-<script id="zone-js">/* Hover (or focus / tap) a zone name to see its image. Chapter-specific, text only. */
-(function(){
-'use strict';
-var Z=[
- {re:/\bexpression studios?\b/i,img:'assets/zones/expression-studio.jpg',alt:'Expression Studio',ch:['ch5']},
- {re:/\bimmersive mobility displays?\b/i,img:'assets/zones/immersive-mobility-display.jpg',alt:'Immersive Mobility Display',ch:['ch3']},
- {re:/\bpower source displays?\b/i,img:'assets/zones/power-source-display.jpg',alt:'Power Source Display',ch:['ch3']},
- {re:/\blounges?\b/i,img:'assets/zones/lounge.jpg',alt:'Lounge',ch:['ch2','ch4']}
-];
-function curCh(){var m=(location.hash||'').match(/^#\/?(ch\d+)/);return m?m[1]:''}
-function wrap(root,ch){
-  var terms=Z.filter(function(z){return z.ch.indexOf(ch)>-1}); if(!terms.length||!root) return;
-  var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:function(n){
-    var p=n.parentNode; if(!p||p.closest('script,style,svg,title,textarea,input,a,button,.zh,.zh-card')) return NodeFilter.FILTER_REJECT;
-    return terms.some(function(z){return z.re.test(n.nodeValue)})?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT}});
-  var nodes=[],n; while((n=w.nextNode())) nodes.push(n);
-  nodes.forEach(function(t){
-    var s=t.nodeValue, frag=document.createDocumentFragment();
-    while(s){
-      var best=null; terms.forEach(function(z){var m=z.re.exec(s); if(m&&(!best||m.index<best.m.index)) best={z:z,m:m}});
-      if(!best){frag.appendChild(document.createTextNode(s));break}
-      if(best.m.index) frag.appendChild(document.createTextNode(s.slice(0,best.m.index)));
-      var sp=document.createElement('span'); sp.className='zh'; sp.tabIndex=0; sp.dataset.zimg=best.z.img; sp.dataset.zalt=best.z.alt; sp.textContent=best.m[0];
-      frag.appendChild(sp); s=s.slice(best.m.index+best.m[0].length);
-    }
-    t.parentNode.replaceChild(frag,t);
-  });
-}
-var card=document.createElement('div'); card.className='zh-card'; card.setAttribute('role','tooltip'); card.innerHTML='<img alt="" decoding="async">';
-document.body.appendChild(card); var img=card.firstChild, cur=null;
-function place(el){
-  var r=el.getBoundingClientRect(), W=window.innerWidth, H=window.innerHeight, cw=Math.min(360,W-24)+2, ch=card.offsetHeight||cw*.65;
-  var x=Math.max(12,Math.min(W-cw-12,r.left+r.width/2-cw/2)), y=r.bottom+10;
-  if(y+ch>H-12) y=Math.max(12,r.top-ch-10);
-  card.style.left=x+'px'; card.style.top=y+'px';
-}
-function show(el){
-  if(cur===el) return; cur=el;
-  img.alt=el.dataset.zalt; card.setAttribute('aria-label',el.dataset.zalt);
-  var go=function(){if(cur===el){place(el);card.classList.add('on')}};
-  if(img.getAttribute('src')!==el.dataset.zimg){card.classList.remove('on');img.onload=go;img.src=el.dataset.zimg; if(img.complete) go()} else go();
-}
-function hide(){cur=null;card.classList.remove('on')}
-document.addEventListener('mouseover',function(e){var z=e.target.closest&&e.target.closest('.zh'); if(z) show(z)});
-document.addEventListener('mouseout',function(e){var z=e.target.closest&&e.target.closest('.zh'); if(z&&!(e.relatedTarget&&z.contains(e.relatedTarget))) hide()});
-document.addEventListener('focusin',function(e){var z=e.target.closest&&e.target.closest('.zh'); if(z) show(z)});
-document.addEventListener('focusout',function(e){if(e.target.closest&&e.target.closest('.zh')) hide()});
-document.addEventListener('click',function(e){var z=e.target.closest&&e.target.closest('.zh'); if(z){ if(cur===z&&card.classList.contains('on')&&e.pointerType==='touch') hide(); else show(z)} else if(cur) hide()});
-document.addEventListener('keydown',function(e){if(e.key==='Escape') hide()});
-window.addEventListener('scroll',function(){if(cur) hide()},true);
-window.addEventListener('resize',hide);
-
-function run(){
-  var ch=curCh(); if(!ch) return;
-  var a=document.querySelector('article.jx-chapter[data-ch="'+ch+'"]'); wrap(a,ch);
-  Array.prototype.forEach.call(document.querySelectorAll('.pop'),function(p){wrap(p,ch)});
-}
-window.addEventListener('hashchange',function(){setTimeout(run,0)});
-new MutationObserver(function(ms){
-  var ch=curCh(); if(!ch) return;
-  ms.forEach(function(m){Array.prototype.forEach.call(m.addedNodes,function(n){
-    if(n.nodeType===1&&!n.classList.contains('zh-card')&&!n.classList.contains('zh')&&(n.matches('.pop')||n.closest('.pop'))) wrap(n,ch)})});
-}).observe(document.body,{childList:true,subtree:true});
-setTimeout(run,0);
 })();
 </script>
 </body></html>
