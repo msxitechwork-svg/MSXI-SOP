@@ -1747,8 +1747,8 @@ kbd{
 <section class="ch-sec" id="chvii-overview" data-title="Overview"><div class="ov">
 <div class="ov-row"><div class="ov-i"><h3 class="eyebrow">Purpose</h3><p class="ov-lead">To create an overall structure to plan, measure, review and action planning for running a healthy and smooth sales operations in the JSW Motors dealership</p></div></div>
 <div class="ov-row"><div class="ov-i"><h3 class="eyebrow">Benefit to Dealership</h3><ul class="list-clean"><li>Defined KPIs for all roleholders</li><li>Defined governance structure and accountability</li><li>Well laid out reviews and action planning guidelines for business performance tracking</li></ul></div><div class="ov-i"><h3 class="eyebrow">Benefit to Customer</h3><ul class="list-clean"><li>All KPIs related to customer demand fulfilment are part of the JSW governance</li><li>All Sales and customer experience parameters are part of the JSW Motors governance framework, so minimum lapse in driving CX related vision</li></ul></div></div></div></section>
-<section class="ch-sec" id="chvii-dwm" data-title="DWM Activities"><h2>DWM Activities</h2><p class="vii-hint">Daily, weekly and monthly review mechanism. Click any activity for its full meeting guide:</p><div class="vii-stats"><div class="vii-stat"><b>20</b><span>Activities</span></div><div class="vii-stat"><b>2</b><span>Daily</span></div><div class="vii-stat"><b>4</b><span>Weekly</span></div><div class="vii-stat"><b>4</b><span>Bi-weekly</span></div><div class="vii-stat"><b>6</b><span>Monthly</span></div><div class="vii-stat"><b>4</b><span>On JSW visit</span></div></div><div id="viiDwm"><div class="vii-tabs" role="tablist" aria-label="Calendar view"><button type="button" class="vii-tab" role="tab" data-mode="week" aria-selected="true">Week</button><button type="button" class="vii-tab" role="tab" data-mode="month" aria-selected="false">Month</button><button type="button" class="vii-tab" role="tab" data-mode="list" aria-selected="false">All 20 activities</button></div><div id="viiDwmBody"><p class="vii-load vii-hint">Loading…</p></div></div></section>
-<section class="ch-sec" id="chvii-kpis" data-title="Roleholder-wise KPIs"><h2>Roleholder-wise KPIs</h2><p class="vii-hint">109 KPIs across 17 roleholders. Click a KPI for its purpose, formula, example, measurement frequency and impact:</p><div id="viiKpi"><div id="viiKpiBody"><p class="vii-load vii-hint">Loading…</p></div></div></section>
+<section class="ch-sec" id="chvii-dwm" data-title="DWM Activities"><h2>DWM Activities</h2><p class="vii-hint">Click on an activity for more details:</p><div class="vii-stats"><div class="vii-stat"><b>20</b><span>Activities</span></div><div class="vii-stat"><b>2</b><span>Daily</span></div><div class="vii-stat"><b>4</b><span>Weekly</span></div><div class="vii-stat"><b>4</b><span>Bi-weekly</span></div><div class="vii-stat"><b>6</b><span>Monthly</span></div><div class="vii-stat"><b>4</b><span>During JSW Official visit</span></div></div><div id="viiDwm"><div class="vii-tabs" role="tablist" aria-label="Calendar view"><button type="button" class="vii-tab" role="tab" data-mode="week" aria-selected="true">Week</button><button type="button" class="vii-tab" role="tab" data-mode="month" aria-selected="false">Month</button><button type="button" class="vii-tab" role="tab" data-mode="list" aria-selected="false">All 20 activities</button></div><div id="viiDwmBody"><p class="vii-load vii-hint">Loading…</p></div></div></section>
+<section class="ch-sec" id="chvii-kpis" data-title="Roleholder-wise KPIs"><h2>Roleholder-wise KPIs</h2><p class="vii-hint">Click on a KPI for more details:</p><div id="viiKpi"><div id="viiKpiBody"><p class="vii-load vii-hint">Loading…</p></div></div></section>
 <nav class="jx-pager" aria-label="Chapter navigation"><button class="jx-pager-btn jx-pager-prev" type="button" data-go="ch7"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><div><span class="jx-pager-k">Previous</span><span class="jx-pager-t">Delivery and Home Demo</span></div></button></nav>
 </article>
 </div></main>
@@ -2734,9 +2734,8 @@ function weekView(){
   h+='<div class="vii-wd">'+cols.map(function(c,i){
     var inner=c.map(function(g){return g.map(card).join('')}).join('');
     return '<div data-d="'+DAYS[i]+'" class="'+(i===6?'sun ':'')+(inner?'':'empty')+'">'+inner+'</div>'}).join('')+'</div>';
-  h+='<div class="vii-band"><h4>Weekly · day not stated in the Excel</h4><div class="row">'+S.weeklyNoDay.map(card).join('')+'</div></div>';
+  h+='<div class="vii-band"><h4>Weekly</h4><div class="row">'+S.weeklyNoDay.map(card).join('')+'</div></div>';
   h+=visitBand()+'</div>';
-  h+='<p class="vii-note">Sunday is a holiday, so nothing is scheduled. Weekly activities repeat every week on the day shown. Dashed activities run on alternate weeks (Monday: Infrastructure Review; Tuesday: Recruitment, Retail Finance and Insurance reviews). The Excel does not say which weeks are the alternate ones.</p>';
   return h;
 }
 function monthOf(y,m){
@@ -2769,15 +2768,14 @@ function monthView(){
     h+='<div class="'+k+'" role="button" tabindex="0" data-day="'+c.d+'" aria-label="'+c.date.toDateString()+', '+its.length+' activities"><span class="d">'+c.d+'</span><span class="vii-bs">'+its.map(function(i){return badge(i[0])}).join('')+'</span></div>';
   });
   h+='</div></div><div class="vii-panel" id="viiPanel"></div>';
-  h+='<div class="vii-band" style="margin-top:16px;border:1px solid var(--jx-line-2);border-radius:var(--jx-r-lg)"><h4>During JSW official visit · not tied to a date</h4><div class="row">'+S.visit.map(card).join('')+'</div></div>';
-  h+='<p class="vii-note">Numbers are the activity Sr. numbers (4 and 5 repeat every day); click a number or a day for details. Sundays are holidays and are left empty. “First 3 working days” skips Sundays and does not account for other public holidays; “1-5” and “10th” are calendar dates. Alternate-week activities (Monday and Tuesday) and the weekly Accessory Business Review (no day stated in the Excel) are not pinned to specific weeks.</p>';
+  h+='<div class="vii-band" style="margin-top:16px;border:1px solid var(--jx-line-2);border-radius:var(--jx-r-lg)"><h4>During JSW official visit</h4><div class="row">'+S.visit.map(card).join('')+'</div></div>';
   return h;
 }
 function panel(){
   var p=$('#viiPanel'); if(!p) return;
   var c=monthOf(sel.getFullYear(),sel.getMonth()).filter(Boolean).filter(function(c){return c.d===sel.getDate()})[0];
   var its=c?itemsFor(c):[];
-  p.innerHTML='<h4>'+sel.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</h4><p class="s">'+(sel.getDay()===0?'Sunday is a holiday. No activities are scheduled.':its.length+' scheduled on this day.')+'</p><div class="row">'+its.map(function(i){return card(i[0]).replace('<span class="m">','<span class="m">'+esc(i[1])+' · ')}).join('')+'</div>';
+  p.innerHTML='<h4>'+sel.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+'</h4><div class="row">'+its.map(function(i){return card(i[0]).replace('<span class="m">','<span class="m">'+esc(act(i[0]).when)+' · ')}).join('')+'</div>';
 }
 function listView(){
   var set=CAD.filter(function(c){return c[0]===listF})[0][1];
