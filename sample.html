@@ -48,6 +48,7 @@ async function open(raw){
   document.open();document.write(html);document.close();
 }
 var KEY='sopk:'+D.v;
+if(/[?&](logout|reset)\b/.test(location.search)){try{sessionStorage.removeItem(KEY)}catch(e){}}
 try{var saved=JSON.parse(sessionStorage.getItem(KEY)||'null');
   if(saved&&saved.exp>Date.now()){
     $('f').style.visibility='hidden';
