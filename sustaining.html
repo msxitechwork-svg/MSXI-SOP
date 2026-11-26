@@ -2489,5 +2489,29 @@
     }
   })();
   </script>
+<!--frz--><style id="jx-frz">
+.vii-doc .tw, .tw{max-height:70vh; max-height:70dvh; overflow:auto !important; overscroll-behavior-x:contain}
+.tw table{border-collapse:separate !important; border-spacing:0}
+.tw thead th{position:sticky; top:0; z-index:3; background:#111113 !important; color:#fff !important}
+.tw tbody tr > :first-child{position:sticky; left:0; z-index:2; background:#fff;
+  box-shadow:1px 0 0 rgba(0,0,0,.12)}
+.tw thead tr > :first-child{left:0; z-index:4}
+@media (max-width:760px){.tw tr > :first-child{max-width:132px; overflow-wrap:anywhere}}
+.vii-tbl{overflow:clip !important}
+.vii-tbl > .vii-row.hd{position:sticky; top:var(--frz-top,0px); z-index:5; background:#111113 !important}
+</style><script id="jx-frz-js">(function(){
+function place(){
+  [].forEach.call(document.querySelectorAll('.vii-tbl'),function(t){
+    var edge=0;
+    if(!t.closest('.vii-dr')) [].forEach.call(document.querySelectorAll('.jx-top,.jx-chips,.top-header'),function(e){
+      var s=getComputedStyle(e); if(s.position!=='fixed'&&s.position!=='sticky') return;
+      var r=e.getBoundingClientRect(); if(r.height&&r.top<=(parseFloat(s.top)||0)+1&&r.bottom>edge) edge=r.bottom; });
+    t.style.setProperty('--frz-top',Math.round(edge)+'px');
+  });
+}
+var n; function soon(){cancelAnimationFrame(n); n=requestAnimationFrame(place)}
+addEventListener('scroll',soon,{passive:true,capture:true}); addEventListener('resize',soon);
+new MutationObserver(soon).observe(document.body,{childList:true,subtree:true}); soon();
+})();</script><!--/frz-->
 </body>
 </html>
